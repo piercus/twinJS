@@ -40,9 +40,12 @@ require([
   var paper = new Paper();
   var anim = new Anim({
     paper : paper,
-    limitSpeed : 50
+    limitSpeed : 50,
+    interval : 100,
+    duration : 20000
   });
 
+  var spaceshipSpeedX = -45;
 
   
   var earth = new Phys({
@@ -54,6 +57,7 @@ require([
     onClick : function(){
       anim.setRef(earth);
       anim.reset();
+      spaceship.speed[0] = spaceshipSpeedX;
     }
   });
 
@@ -66,18 +70,26 @@ require([
     onClick : function(){
       anim.setRef(mars);
       anim.reset();
+      spaceship.speed[0] = spaceshipSpeedX;
     }
   });
 
-  var Spaceship = S.extend({
+  var Spaceship = Phys.extend({
     "-tick" : function(o){
       
       var repMe = this.getRefRep(o.ref),
-          repMars = mars.getRefRep(o.ref);
-      
+          repMars = mars.getRefRep(o.ref),
+          repEarth = earth.getRefRep(o.ref);
+
       if(repMe.pos[0]<repMars.pos[0]){
         this.speed[0] = -1*this.speed[0];
-        this.drawing && this.drawing.remove();
+        this.rmDrawing();
+        earth.rmDrawing();
+        mars.rmDrawing();
+      }
+
+      if(repMe.pos[0]>repEarth.pos[0]){
+        anim.pause();
       }
 
     }
@@ -85,13 +97,14 @@ require([
 
   var spaceship = new Spaceship({
     //image : 
-    speed : [-45, 0],
+    speed : [spaceshipSpeedX, 0],
     name : "spaceship",
-    pos : [0,0],
-    size : [50,50],
+    pos : [0, 100],
+    size : [50, 50],
     onClick : function(){
       anim.setRef(spaceship);
       anim.reset();
+      spaceship.speed[0] = spaceshipSpeedX;
     }
   });
 

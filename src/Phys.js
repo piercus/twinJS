@@ -30,12 +30,12 @@ require.define("twinJS/Phys", ["seed-js/Seed", "twinJS/Rep", "twinJS/lorentz"], 
       },
 
     	draw : function(paperRaph, ref){
-          this.drawing || this.initDrawing(paperRaph, this.getRefRep(ref), ref.duration);
+          this.drawing || this.initDrawing(paperRaph, this.getRefRep(ref), ref.duration, ref.interval);
           this.updateTime();
 
     	},
 
-      initDrawing : function(paperRaph, rep, duration){
+      initDrawing : function(paperRaph, rep, duration, interval){
         
         var st = paperRaph.set();
 
@@ -50,7 +50,7 @@ require.define("twinJS/Phys", ["seed-js/Seed", "twinJS/Rep", "twinJS/lorentz"], 
           st.push(paperRaph.rect(x, y, w, h).attr({ fill : this.fill }));
         }
         
-        //console.log(x,y,w,h);
+        console.log(x,y,w,h);
 
         st.push(paperRaph.path(this.getCrossPath(x, y, w, h)).attr({"stroke" : rep.ref.obj.name === this.name ? "blue" : "red"}));
 
@@ -67,7 +67,7 @@ require.define("twinJS/Phys", ["seed-js/Seed", "twinJS/Rep", "twinJS/lorentz"], 
 
         this.drawing = st;
 
-        this.animateDrawing(paperRaph, rep, duration, x, y, w, h);
+        this.animateDrawing(paperRaph, rep, duration, interval, x, y, w, h);
         
       },
 
@@ -75,7 +75,7 @@ require.define("twinJS/Phys", ["seed-js/Seed", "twinJS/Rep", "twinJS/lorentz"], 
         return "M"+(x+w/2)+" "+(y+h/2)+"h"+w+"h"+(-2*w)+"h"+w+"v"+h+"v"+(-2*h);
       },
 
-      animateDrawing : function(paperRaph, rep, duration, x, y, w, h){
+      animateDrawing : function(paperRaph, rep, duration, interval, x, y, w, h){
         var params = {};
         if(rep.speed[0] !== 0) params["x"] =  rep.speed[0]*duration/1000+rep.pos[0]+rep.ref.pos[0];
 
@@ -145,7 +145,10 @@ require.define("twinJS/Phys", ["seed-js/Seed", "twinJS/Rep", "twinJS/lorentz"], 
 
               //console.log("rep created with limitSpeed to xxxx");
 
-          } 
+          } else {
+            //console.log(ref.obj.speed[0]);
+            this.reps[ref.obj.name].speed = [this.speed[0] - ref.obj.speed[0], this.speed[1] - ref.obj.speed[1]];
+          }
 
           return this.reps[ref.obj.name];
       },
@@ -154,10 +157,10 @@ require.define("twinJS/Phys", ["seed-js/Seed", "twinJS/Rep", "twinJS/lorentz"], 
           var rep = this.getRefRep(o.ref);
 
           rep.speed = [this.speed[0] - o.ref.obj.speed[0], this.speed[1] - o.ref.obj.speed[1]];
-
+          //console.log((o.time-rep.time)/o.interval);
           rep.setPos(
-              rep.pos[0] + rep.speed[0]*(o.time-rep.time)/o.interval, 
-              rep.pos[1] + rep.speed[1]*(o.time-rep.time)/o.interval
+              rep.pos[0] + rep.speed[0]*(o.time-rep.time)/1000, 
+              rep.pos[1] + rep.speed[1]*(o.time-rep.time)/1000
           );
 
           rep.time = o.time;
@@ -180,8 +183,16 @@ require.define("twinJS/Phys", ["seed-js/Seed", "twinJS/Rep", "twinJS/lorentz"], 
           this[i] = o[i];
         }
         this.reps = null;
+        this.rmDrawing();
+      },
+
+      rmDrawing : function(){
         this.drawing && this.drawing.remove();
-        this.drawing = null;
+        this.drawing = null;   
+      },
+
+      pause : function(){
+        this.drawing.stop();
       }
 
     });

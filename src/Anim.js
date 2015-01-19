@@ -24,6 +24,7 @@ require.define("twinJS/Anim", ["seed-js/Seed"], function(S){
             this.ref || (this.ref = {});
             this.ref.obj = phys;
             this.ref.duration = this.duration;
+            this.ref.interval = this.interval;
             this.ref.pos = [this.paper.width/2-phys.pos[0], this.paper.height/2-phys.pos[1]];
             this.ref.limitSpeed = this.limitSpeed;
             this.addElem(phys);
@@ -94,6 +95,14 @@ require.define("twinJS/Anim", ["seed-js/Seed"], function(S){
           for(var i in this.elems) if(this.elems.hasOwnProperty(i)) {
             var e = this.elems[i];
             e.reset();
+          }
+        },
+
+        pause : function(){
+          clearInterval(this.intervalId);
+          for(var i in this.elems) if(this.elems.hasOwnProperty(i)) {
+            var e = this.elems[i];
+            e.pause();
           }
         }
 
