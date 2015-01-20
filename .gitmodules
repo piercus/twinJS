@@ -1,0 +1,5 @@
+[submodule "inputex"]
+    path = lib/inputex
+    url = https://github.com/piercus/inputex.git
+    branch = wrapper
+    
