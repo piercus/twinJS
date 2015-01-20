@@ -35,7 +35,7 @@ require.define("twinJS/Anim", ["seed-js/Seed"], function(S){
             var paperRaph = this.paper.raphael, ref = this.ref;
 
             for(var i in this.elems) if(this.elems.hasOwnProperty(i)) {
-            var e = this.elems[i];
+                var e = this.elems[i];
                 e.draw(paperRaph, ref);
             }
         },

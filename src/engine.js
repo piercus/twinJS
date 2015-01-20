@@ -26,7 +26,7 @@ require([
 
   var Paper = S.extend({
   	options : {
-  		width : 600,
+  		width : 800,
   		height : 400,
   		pos : [0,0]
   	},
@@ -189,7 +189,8 @@ require([
           speed : [v.speedX,v.speedY],
           fill : "#eeeeee",
           onClick : function(){
-            form.setValue({ref:v.name});
+            values.ref = v.name;
+            form.setValue(values);
           },
           image : v.image
         }));  

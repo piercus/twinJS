@@ -9,6 +9,7 @@ require.define("twinJS/Phys", ["seed-js/Seed", "twinJS/Rep", "twinJS/lorentz"], 
         paper : null,
         fill : "#555555",
         image : null,
+        drawable : true,
         onClick : null,
     		size : [0,0]//,// in his own referentiel
         //reps : {}
@@ -130,12 +131,18 @@ require.define("twinJS/Phys", ["seed-js/Seed", "twinJS/Rep", "twinJS/lorentz"], 
     		
     	},
 
+      getSpeedInRef : function(ref) {
+
+          return lorentz.composeSpeed(this.speed, [-1*ref.obj.speed[0], -1*ref.obj.speed[1]], ref.limitSpeed);
+
+      },
+
       getRefRep : function(ref){
           this.reps || (this.reps = {});
          // logger(ref);
           if(!this.reps[ref.obj.name]){ 
               
-              var speed = [this.speed[0] - ref.obj.speed[0], this.speed[1] - ref.obj.speed[1]];
+              var speed = this.getSpeedInRef(ref);
               this.reps[ref.obj.name] = new Rep({
                   time : 0,   
                   speed : speed,
@@ -145,10 +152,7 @@ require.define("twinJS/Phys", ["seed-js/Seed", "twinJS/Rep", "twinJS/lorentz"], 
 
               //console.log("rep created with limitSpeed to xxxx");
 
-          } else {
-            //console.log(ref.obj.speed[0]);
-            this.reps[ref.obj.name].speed = [this.speed[0] - ref.obj.speed[0], this.speed[1] - ref.obj.speed[1]];
-          }
+          } 
 
           return this.reps[ref.obj.name];
       },
@@ -156,18 +160,19 @@ require.define("twinJS/Phys", ["seed-js/Seed", "twinJS/Rep", "twinJS/lorentz"], 
       tick : function(o){
           var rep = this.getRefRep(o.ref);
 
-          rep.speed = [this.speed[0] - o.ref.obj.speed[0], this.speed[1] - o.ref.obj.speed[1]];
+          rep.speed = this.getSpeedInRef(rep.ref);
           //console.log((o.time-rep.time)/o.interval);
+          var timeRepIncr = (o.time-rep.time);
           rep.setPos(
-              rep.pos[0] + rep.speed[0]*(o.time-rep.time)/1000, 
-              rep.pos[1] + rep.speed[1]*(o.time-rep.time)/1000
+              rep.pos[0] + rep.speed[0]*timeRepIncr/1000, 
+              rep.pos[1] + rep.speed[1]*timeRepIncr/1000
           );
 
           rep.time = o.time;
 
           rep.setSize();
 
-          this.time = lorentz.getContracted(rep.speedNorm, o.limitSpeed, o.time);
+          this.time += lorentz.getContracted(rep.speedNorm, o.limitSpeed, timeRepIncr);
          
         //  this.draw();
          
@@ -184,6 +189,7 @@ require.define("twinJS/Phys", ["seed-js/Seed", "twinJS/Rep", "twinJS/lorentz"], 
         }
         this.reps = null;
         this.rmDrawing();
+        this.time = 0;
       },
 
       rmDrawing : function(){

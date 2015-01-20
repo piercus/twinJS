@@ -26,7 +26,7 @@ require([
 
   var Paper = S.extend({
   	options : {
-  		width : 600,
+  		width : 800,
   		height : 400,
   		pos : [0,0]
   	},
@@ -45,15 +45,15 @@ require([
     duration : 20000
   });
 
-  var spaceshipSpeedX = -45;
+  var spaceshipSpeedX = -40;
 
   
   var earth = new Phys({
     //image : 
     name : "earth",
     speed : [0, 0],
-    pos : [0,0],
-    size : [100,100],
+    pos : [50,0],
+    size : [50,50],
     onClick : function(){
       anim.setRef(earth);
       anim.reset();
@@ -65,8 +65,8 @@ require([
     //image : 
     name : "mars",
     speed : [0, 0],
-    pos : [-200, 0],
-    size : [100,100],
+    pos : [-50, 0],
+    size : [50,50],
     onClick : function(){
       anim.setRef(mars);
       anim.reset();
@@ -86,6 +86,7 @@ require([
         this.rmDrawing();
         earth.rmDrawing();
         mars.rmDrawing();
+        repMe.pos[0] = repMars.pos[0];
       }
 
       if(repMe.pos[0]>repEarth.pos[0]){
@@ -94,15 +95,28 @@ require([
 
     }
   });
+  var spaceshipRef = new Phys({
+    //image : 
+    name : "spaceshipRef",
+    speed : [spaceshipSpeedX, 0],
+    pos : [50, 100],
+    size : [1,1],
+    drawable : false,
+    onClick : function(){
+      anim.setRef(spaceshipRef);
+      anim.reset();
+      spaceship.speed[0] = spaceshipSpeedX;
+    }
+  });
 
   var spaceship = new Spaceship({
     //image : 
     speed : [spaceshipSpeedX, 0],
     name : "spaceship",
-    pos : [0, 100],
-    size : [50, 50],
+    pos : [50, 100],
+    size : [25, 25],
     onClick : function(){
-      anim.setRef(spaceship);
+      anim.setRef(spaceshipRef);
       anim.reset();
       spaceship.speed[0] = spaceshipSpeedX;
     }
@@ -112,6 +126,7 @@ require([
   anim.addElem(earth);
   anim.addElem(mars);
   anim.addElem(spaceship);
+  anim.addElem(spaceshipRef);
   anim.setRef(earth);
   anim.reset();
 
